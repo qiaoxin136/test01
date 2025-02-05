@@ -20,7 +20,7 @@ function App() {
       return;
     }
     uploadData({
-      path: `picture-submissions/`,
+      path: `picture-submissions/${file.name}`,
       data: file,
     });
   };
