@@ -1,11 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
+import { uploadData } from 'aws-amplify/storage';
 
 const client = generateClient<Schema>();
 
 function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+
+  const [file, setFile] = useState();
+
+  const handleChange = (event) => {
+    setFile(event.target.files?.[0]);
+  };
+
+  const handleClick = () => {
+    console.log(file);
+    if (!file) {
+      return;
+    }
+    uploadData({
+      path: `picture-submissions/`,
+      data: file,
+    });
+  };
 
   useEffect(() => {
     client.models.Todo.observeQuery().subscribe({
@@ -27,12 +45,9 @@ function App() {
         ))}
       </ul>
       <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
+      <input type="file" onChange={handleChange} />
+      <button onClick={handleClick}>Upload</button>
+    </div>
     </main>
   );
 }
